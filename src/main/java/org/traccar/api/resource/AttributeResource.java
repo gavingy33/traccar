@@ -62,37 +62,31 @@ public class AttributeResource extends ExtendedObjectResource<Attribute> {
 
         Object result = computedAttributesHandler.computeAttribute(entity, position);
         if (result != null) {
-            switch (entity.getType()) {
-                case "number":
-                    Number numberValue = (Number) result;
-                    return Response.ok(numberValue).build();
-                case "boolean":
-                    Boolean booleanValue = (Boolean) result;
-                    return Response.ok(booleanValue).build();
-                default:
-                    return Response.ok(result.toString()).build();
-            }
+            return switch (entity.getType()) {
+                case "number", "boolean" -> Response.ok(result).build();
+                default -> Response.ok(result.toString()).build();
+            };
         } else {
             return Response.noContent().build();
         }
     }
 
     @POST
-    public Response add(Attribute entity) throws StorageException {
+    public Response add(Attribute entity) throws Exception {
         permissionsService.checkAdmin(getUserId());
         return super.add(entity);
     }
 
     @Path("{id}")
     @PUT
-    public Response update(Attribute entity) throws StorageException {
+    public Response update(Attribute entity) throws Exception {
         permissionsService.checkAdmin(getUserId());
         return super.update(entity);
     }
 
     @Path("{id}")
     @DELETE
-    public Response remove(@PathParam("id") long id) throws StorageException {
+    public Response remove(@PathParam("id") long id) throws Exception {
         permissionsService.checkAdmin(getUserId());
         return super.remove(id);
     }
